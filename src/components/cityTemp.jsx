@@ -18,6 +18,7 @@ const CityTemp = () => {
 
 
 
+
     const getLocalTime = (timezoneOffset) => {
         const now = new Date();
         const utcTime = now.getTime() + now.getTimezoneOffset() * 60000; // Convert to UTC
@@ -44,15 +45,18 @@ const CityTemp = () => {
     };
     const getBackgroundStyle = () => {
         const weatherMain = data.weather && data.weather.length > 0 ? data.weather[0].main : null;
+        const timezoneOffset = data.timezone || 0; // Ensure a default value (0) if data.timezone is falsy
 
-        const hour = new Date().getHours(); // Current hour in local time
+        const now = new Date();
+        const hour = now.getUTCHours() + timezoneOffset / 3600; // Adjust UTC hour by timezone offset
 
-        // Determine if it's day or night based on the current hour
+        // Determine if it's day or night based on the current hour adjusted for timezone offset
         const isDay = hour >= 6 && hour < 18;
 
         // Return the appropriate background style based on weather and time
         return isDay ? dayTime[weatherMain] : nightTime[weatherMain];
     };
+
 
 
 
