@@ -1,9 +1,22 @@
 // cityTemp.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const CityTemp = () => {
     const { loading, data, error } = useSelector((state) => state);
+
+
+
+    const getLocalTime = (timezoneOffset) => {
+        const now = new Date();
+        const utcTime = now.getTime() + now.getTimezoneOffset() * 60000; // Get UTC time in milliseconds
+        const localTime = new Date(utcTime + timezoneOffset * 1000); // Adjust for local timezone offset
+        return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+
+
+
 
     const animation = {
         Rain: "https://lottie.host/5eafa51a-a952-449b-a4e2-625095b0373f/5Gtwfit4gG.json",
@@ -29,6 +42,10 @@ const CityTemp = () => {
 
     return (
         <div className='flex justify-center mx-auto max-w-[1640px] border rounded'>
+
+
+
+        
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (
@@ -57,6 +74,7 @@ const CityTemp = () => {
                             <p className='pb-5'>
                                 Feels Like: {data.main.feels_like}°C
                             </p>
+                            <p>Local Time: {getLocalTime(data.timezone)}</p>
                         </div>
                     )}
                 </div>
