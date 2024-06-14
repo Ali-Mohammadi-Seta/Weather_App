@@ -1,19 +1,58 @@
 // cityTemp.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import cloudsDay from '../assets/CloudsDay.jpg'
+import cloudsNight from '../assets/CloudsNight.jpg'
+import rainNight from '../assets/RainNight.jpg'
+import rainDay from '../assets/RainDay.jpg'
+import clearDay from '../assets/ClearDay.jpg'
+import clearNight from '../assets/ClearNight.jpg'
+import snowDay from '../assets/SnowDay.jpg'
+import snowNight from '../assets/SnowNight.jpg'
+import hazeDay from '../assets/HazeDay.jpg'
+import hazeNight from '../assets/HazeNight.jpg'
 
 const CityTemp = () => {
     const { loading, data, error } = useSelector((state) => state);
 
 
 
+
     const getLocalTime = (timezoneOffset) => {
         const now = new Date();
-        const utcTime = now.getTime() + now.getTimezoneOffset() * 60000; // Get UTC time in milliseconds
-        const localTime = new Date(utcTime + timezoneOffset * 1000); // Adjust for local timezone offset
-        return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const utcTime = now.getTime() + now.getTimezoneOffset() * 60000; // Convert to UTC
+        const localTime = new Date(utcTime + timezoneOffset * 1000); // Adjust to local time
+        return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format time
     };
 
+
+
+    const dayTime = {
+        Rain: { backgroundImage: `url(${rainDay})` },
+        Clear: { backgroundImage: `url(${clearDay})` },
+        Clouds: { backgroundImage: `url(${cloudsDay})` },
+        Snow: { backgroundImage: `url(${snowDay})` },
+        Haze: { backgroundImage: `url(${hazeDay})` },
+    };
+
+    const nightTime = {
+        Rain: { backgroundImage: `url(${rainNight})` },
+        Clear: { backgroundImage: `url(${clearNight})` },
+        Clouds: { backgroundImage: `url(${cloudsNight})` },
+        Snow: { backgroundImage: `url(${snowNight})` },
+        Haze: { backgroundImage: `url(${hazeNight})` },
+    };
+    const getBackgroundStyle = () => {
+        const weatherMain = data.weather && data.weather.length > 0 ? data.weather[0].main : null;
+
+        const hour = new Date().getHours(); // Current hour in local time
+
+        // Determine if it's day or night based on the current hour
+        const isDay = hour >= 6 && hour < 18;
+
+        // Return the appropriate background style based on weather and time
+        return isDay ? dayTime[weatherMain] : nightTime[weatherMain];
+    };
 
 
 
@@ -41,11 +80,7 @@ const CityTemp = () => {
 
 
     return (
-        <div className='flex justify-center mx-auto max-w-[1640px] border rounded'>
-
-
-
-        
+        <div className='flex justify-center mx-auto max-w-[1640px] border rounded h-screen' style={{ ...getBackgroundStyle(), backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }} >
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (
