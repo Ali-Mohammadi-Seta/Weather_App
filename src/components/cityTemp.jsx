@@ -1,5 +1,6 @@
 // cityTemp.jsx
 import React, {useEffect, useState} from 'react';
+import PropTypes from 'prop-types'
 import {useSelector} from 'react-redux';
 import cloudsDay from '../assets/CloudsDay.jpg'
 import cloudsNight from '../assets/CloudsNight.jpg'
@@ -12,7 +13,7 @@ import snowNight from '../assets/SnowNight.jpg'
 import hazeDay from '../assets/HazeDay.jpg'
 import hazeNight from '../assets/HazeNight.jpg'
 
-const CityTemp = () => {
+const CityTemp = ({setBackgroundStyle}) => {
     const {loading, data, error} = useSelector((state) => state);
 
 
@@ -58,6 +59,8 @@ const CityTemp = () => {
     };
 
 
+
+
     const animation = {
         Rain: "https://lottie.host/5eafa51a-a952-449b-a4e2-625095b0373f/5Gtwfit4gG.json",
         Clear: "https://lottie.host/ff14d40f-7962-4ff6-8179-90f0653f61f4/orsgLjt11R.json",
@@ -80,6 +83,13 @@ const CityTemp = () => {
 
     const animationUrl = getAnimationUrl();
 
+    useEffect(() => {
+        if (data) {
+            const backgroundStyle = getBackgroundStyle();
+            setBackgroundStyle(backgroundStyle);
+        }
+    }, [data, setBackgroundStyle]);
+
 
     return (
 
@@ -88,7 +98,7 @@ const CityTemp = () => {
         <div className='items-center mx-auto max-w-[1640px]  text-black'
              style={{...getBackgroundStyle(), backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
             {loading ? (
-                <div>Loading...
+                <div>Loading...t
                     <span className="loading loading-dots loading-md"></span></div>
             ) : error ? (
                 <div>
@@ -121,7 +131,7 @@ const CityTemp = () => {
                                 {data.main.temp}°C
                             </p>
 
-                            <div className='grid grid-cols-1 gap-6  mx-auto border  justify-items-center '>
+                            <div className='grid grid-cols-1 gap-6  mx-auto   justify-items-center '>
                                 <p className='pb-5 border rounded w-[300px] glass '>Weather: {data.weather[0].main}</p>
                                 <p className='pb-5 border rounded w-[300px] glass'>Humidity: {data.main.humidity}%</p>
                                 <p className='pb-5 border rounded w-[300px] glass '>Wind Speed: {data.wind.speed} MPH</p>
@@ -137,6 +147,10 @@ const CityTemp = () => {
             )}
         </div>
     );
+};
+
+CityTemp.propTypes = {
+    setBackgroundStyle: PropTypes.func.isRequired, // Define prop type and mark as required
 };
 
 export default CityTemp;

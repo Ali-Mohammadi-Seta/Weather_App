@@ -17,7 +17,7 @@ const SearchBar = () => {
 
     return (
 
-        <div className=' max-w-[1640px] mx-auto pb-20'>
+        <div className=' max-w-[1640px] mx-auto   bg-transparent max-h-fit pb-10'>
             <div className='flex items-center justify-center mx-auto px-2 pt-20'>
             <label className="input input-bordered flex items-center gap-2">
                 <input
