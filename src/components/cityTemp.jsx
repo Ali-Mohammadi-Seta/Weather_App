@@ -24,6 +24,15 @@ const CityTemp = ({setBackgroundStyle}) => {
         return localTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); // Format time
     };
 
+    const isDayTime = () => {
+        const timezoneOffset = data.timezone || 0;
+        const now = new Date();
+        const hour = now.getUTCHours() + timezoneOffset / 3600;
+        return hour >= 6 && hour < 18;
+    };
+
+    const textColor = isDayTime() ? 'black' : 'white';
+
 
     const dayTime = {
         Rain: {backgroundImage: `url(${rainDay})`},
@@ -31,8 +40,8 @@ const CityTemp = ({setBackgroundStyle}) => {
         Clouds: {backgroundImage: `url(${cloudsDay})`},
         Snow: {backgroundImage: `url(${snowDay})`},
         Haze: {backgroundImage: `url(${hazeDay})`},
-        // Fog:{},
-        // sand:{},
+        Fog: {backgroundImage: `url(${hazeDay})`},
+        sand: {backgroundImage: `url(${hazeDay})`},
     };
 
     const nightTime = {
@@ -41,35 +50,38 @@ const CityTemp = ({setBackgroundStyle}) => {
         Clouds: {backgroundImage: `url(${cloudsNight})`},
         Snow: {backgroundImage: `url(${snowNight})`},
         Haze: {backgroundImage: `url(${hazeNight})`},
-        // Fog:{},
-        // sand:{},
+        Fog: {backgroundImage: `url(${hazeNight})`},
+        sand: {backgroundImage: `url(${hazeNight})`},
     };
     const getBackgroundStyle = () => {
         const weatherMain = data.weather && data.weather.length > 0 ? data.weather[0].main : null;
-        const timezoneOffset = data.timezone || 0; // Ensure a default value (0) if data.timezone is falsy
-
+        const timezoneOffset = data.timezone || 0;
         const now = new Date();
-        const hour = now.getUTCHours() + timezoneOffset / 3600; // Adjust UTC hour by timezone offset
-
-        // Determine if it's day or night based on the current hour adjusted for timezone offset
+        const hour = now.getUTCHours() + timezoneOffset / 3600;
         const isDay = hour >= 6 && hour < 18;
-
-        // Return the appropriate background style based on weather and time
         return isDay ? dayTime[weatherMain] : nightTime[weatherMain];
     };
 
-
-
-
-    const animation = {
-        Rain: "https://lottie.host/5eafa51a-a952-449b-a4e2-625095b0373f/5Gtwfit4gG.json",
+    const animationDay = {
+        Rain: "https://lottie.host/f05695c2-2f1b-4747-b175-79057d0ca660/gsG9pZHp1w.json",
         Clear: "https://lottie.host/ff14d40f-7962-4ff6-8179-90f0653f61f4/orsgLjt11R.json",
         Clouds: "https://lottie.host/34b26663-65b0-424c-9a86-6a27d2da7ddd/wJuHuuy5lU.json",
         Snow: "https://lottie.host/00b4eb1f-d297-4e89-a01a-18e1a68c59f8/kr8lKhDuvx.json",
-        Haze: "https://lottie.host/6f7d9f26-ef38-4761-bcdc-e9dc055f40e4/Pkcenpqsb1.json",
-        // Fog:{},
-        // sand:{},
+        Haze: "https://lottie.host/fac827c4-8b62-4e43-87bb-ba3c8cadf385/F52Qt9k0Yl.json",
+        Fog: "https://lottie.host/fac827c4-8b62-4e43-87bb-ba3c8cadf385/F52Qt9k0Yl.json",
+        sand: "https://lottie.host/fac827c4-8b62-4e43-87bb-ba3c8cadf385/F52Qt9k0Yl.json",
     };
+
+    const animationNight = {
+        Rain: "https://lottie.host/5eafa51a-a952-449b-a4e2-625095b0373f/5Gtwfit4gG.json",
+        Clear: "https://lottie.host/916cbb86-9cf0-4abb-b11d-0cf9ba8e0b50/vuotpcLpNI.json",
+        Clouds: "https://lottie.host/92d62636-b9bd-440a-9a88-da04dfb20a60/qTmS9lNGyM.json",
+        Snow: "https://lottie.host/b669068b-0107-46ea-9f4b-77ab6c40a7c0/2u2pnrnqC4.json",
+        Haze: "https://lottie.host/6f7d9f26-ef38-4761-bcdc-e9dc055f40e4/Pkcenpqsb1.json",
+        Fog: "https://lottie.host/6f7d9f26-ef38-4761-bcdc-e9dc055f40e4/Pkcenpqsb1.json",
+        sand: "https://lottie.host/6f7d9f26-ef38-4761-bcdc-e9dc055f40e4/Pkcenpqsb1.json",
+    };
+
 
     useEffect(() => {
         // Dynamically import the DotLottie player
@@ -78,10 +90,17 @@ const CityTemp = ({setBackgroundStyle}) => {
 
     const getAnimationUrl = () => {
         const weather = data.weather && data.weather[0].main;
-        return animation[weather] || null;
+        const timezoneOffset = data.timezone || 0;
+        const now = new Date();
+        const hour = now.getUTCHours() + timezoneOffset / 3600;
+        const isDay = hour >= 6 && hour < 18;
+
+        return isDay ? animationDay[weather] : animationNight[weather];
     };
 
     const animationUrl = getAnimationUrl();
+
+
 
     useEffect(() => {
         if (data) {
@@ -94,12 +113,11 @@ const CityTemp = ({setBackgroundStyle}) => {
     return (
 
 
-
-        <div className='items-center mx-auto max-w-[1640px]  text-black'
-             style={{...getBackgroundStyle(), backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+        <div className='items-center mx-auto max-w-[1640px] text-purple-700 '
+             style={{...getBackgroundStyle(), backgroundSize: 'cover', backgroundRepeat: 'no-repeat' , color: textColor}}>
             {loading ? (
-                <div>Loading...t
-                    <span className="loading loading-dots loading-md"></span></div>
+                <div className='text-center'>Loading...
+                    <span className="loading loading-spinner loading-md"></span></div>
             ) : error ? (
                 <div>
                     <div role="alert" className="alert alert-error">
@@ -109,10 +127,11 @@ const CityTemp = ({setBackgroundStyle}) => {
                                   d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span>{error}</span>
-                    </div></div>
+                    </div>
+                </div>
             ) : (
                 <div className=' text-center'>
-                    <h1 className='font-bold text-center text-4xl lg:text-7xl md:text-5xl'>{data.name}</h1>
+                    <h1 className='font-bold text-center text-4xl lg:text-7xl md:text-5xl pt-10'>{data.name}</h1>
                     <div className='flex justify-center items-center'>
                         {animationUrl && (
                             <dotlottie-player
@@ -131,14 +150,16 @@ const CityTemp = ({setBackgroundStyle}) => {
                                 {data.main.temp}°C
                             </p>
 
-                            <div className='grid grid-cols-1 gap-6  mx-auto   justify-items-center '>
+                            <div className='grid grid-cols-1 gap-6  mx-auto   justify-items-center pb-10'>
                                 <p className='pb-5 border rounded w-[300px] glass '>Weather: {data.weather[0].main}</p>
                                 <p className='pb-5 border rounded w-[300px] glass'>Humidity: {data.main.humidity}%</p>
-                                <p className='pb-5 border rounded w-[300px] glass '>Wind Speed: {data.wind.speed} MPH</p>
+                                <p className='pb-5 border rounded w-[300px] glass '>Wind
+                                    Speed: {data.wind.speed} MPH</p>
                                 <p className='pb-5 border rounded w-[300px] glass'>
                                     Feels Like: {data.main.feels_like}°C
                                 </p>
-                                <p className="pb-5 border rounded w-[300px] glass">Local Time: {getLocalTime(data.timezone)}</p>
+                                <p className="pb-5 border rounded w-[300px] glass">Local
+                                    Time: {getLocalTime(data.timezone)}</p>
                             </div>
                         </div>
 
